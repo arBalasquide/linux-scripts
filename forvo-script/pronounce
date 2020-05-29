@@ -1,0 +1,5 @@
+#!/bin/bash
+WORD=$1
+LANG="#ja"
+FILE_PATH=`curl -s https://forvo.com/search/$WORD/$LANG | grep -m 1 'play_' | cut -d',' -f2 | sed "s/'//g"`
+curl -s https://forvo.com/player-mp3Handler.php?path=$FILE_PATH | cvlc --play-and-exit - 
