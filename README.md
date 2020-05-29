@@ -1,5 +1,3 @@
-# linux-scripts
-
 Collection of scripts I sometimes use. Also used for educational purposes.
 
 # forvo-script
