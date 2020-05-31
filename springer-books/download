@@ -1,29 +1,28 @@
 #!/bin/bash
 
-URL='http://link.springer.com/content/pdf/10.1007/'
-BOOKPATH="pdfbooks"
+url='http://link.springer.com/content/pdf/10.1007/'
+bookpath="pdfbooks"
 > not_foundpdf # create empty file in case script runs multiple times
-mkdir -p $BOOKPATH
+mkdir -p $bookpath
 
 while read p; do
     curl -sL $p > tmp_file
-    ISBN=$(cut -d "=" -f3 <<< $p)
-    TITLE=$(grep -m1 "<h1>" tmp_file | sed -e 's/<h1>//g' -e 's_</h1>__g' | tr -d ' ')
+    isbn=$(cut -d "=" -f3 <<< $p)
+    title=$(grep -m1 "<h1>" tmp_file | sed -e 's/<h1>//g' -e 's_</h1>__g' | tr -d ' ')
 
-    if curl -L --output /dev/null --silent --head --fail "$URL$ISBN"
+    if curl -L --output /dev/null --silent --head --fail "$url$isbn"
     then
-        curl -L "$URL$ISBN.pdf" --output "$BOOKPATH/$TITLE.pdf"
+        curl -L "$url$isbn.pdf" --output "$bookpath/$title.pdf"
     else
-        DOWNLOAD_URL=$(grep "class=\"c-button c-button--blue c-button__icon-right test-download-book-options test-bookpdf-link\"" \
-        tmp_file | grep -Eo -m 1 'href="[^\"]+"' | sed -e s/href=//g -e s/\"//g -e s_/content/pdf/10.1007%2F__g)
+        downloadurl=$(grep "class=\"c-button c-button--blue c-button__icon-right test-download-book-options test-bookpdf-link\"" \
+            tmp_file | grep -Eo -m 1 'href="[^\"]+"' | sed -e s/href=//g -e s/\"//g -e s_/content/pdf/10.1007%2F__g)
 
-        if curl -L --output /dev/null --silent --head --fail "$URL$DOWNLOAD_URL"
+        if curl -L --output /dev/null --silent --head --fail "$url$downloadurl"
         then
-            curl -L "$URL$DOWNLOAD_URL" --output "$BOOKPATH/$TITLE.pdf"
+            curl -L "$url$downloadurl" --output "$bookpath/$title.pdf"
         else
-            printf "Did not find the book '$TITLE'\n"
-            echo $TITLE >> not_foundpdf
+            printf "Did not find the book '$title'\n"
+            echo $title >> not_foundpdf
         fi
     fi
 done <links.txt
-

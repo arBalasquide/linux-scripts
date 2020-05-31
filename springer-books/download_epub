@@ -1,29 +1,30 @@
 #!/bin/bash
 
-URL="http://link.springer.com/download/epub/10.1007/"
-BOOKPATH="epubbooks"
+url="http://link.springer.com/download/epub/10.1007/"
+bookpath="epubbooks"
 > not_foundepub # create empty file in case script runs multiple times
-mkdir -p $BOOKPATH
+mkdir -p $bookpath
 
 while read p; do
     curl -sL $p > tmp_file
-    ISBN=$(cut -d "=" -f3 <<< $p)
-    TITLE=$(grep -m1 "<h1>" tmp_file | sed -e 's/<h1>//g' -e 's_</h1>__g' | tr -d ' ')
-    if curl -L --output /dev/null --silent --head --fail "$URL$ISBN.epub"
+    isbn=$(cut -d "=" -f3 <<< $p)
+    title=$(grep -m1 "<h1>" tmp_file | sed -e 's/<h1>//g' -e 's_</h1>__g' | tr -d ' ')
+
+    # springer book doesnt organize all books by ISBN
+    if curl -L --output /dev/null --silent --head --fail "$url$isbn.epub"
     then
-        curl -L "$URL$ISBN.epub" --output "$BOOKPATH/$TITLE.epub"
+        curl -L "$url$isbn.epub" --output "$bookpath/$title.epub"
     else
-        DOWNLOAD_URL=$(grep "class=\"c-button c-button__icon-right test-bookepub-link\"" \
+        download_url=$(grep "class=\"c-button c-button__icon-right test-bookepub-link\"" \
             tmp_file | grep -Eo -m 1 'href="[^\"]+"' | sed -e s/href=//g -e s/\"//g -e s_/download/epub/10.1007%2F__g)
-        echo $URL$DOWNLOAD_URL
-        if curl -L --output /dev/null --silent --head --fail "$URL$DOWNLOAD_URL"
+
+        if curl -L --output /dev/null --silent --head --fail "$url$download_url"
         then
-            curl -L "$URL$DOWNLOAD_URL" --output "$BOOKPATH/$TITLE.epub"
+            curl -L "$url$download_url" --output "$bookpath/$title.epub"
         else
-            printf "Did not find epub version of '$TITLE'\n\n"
-            echo $TITLE >> not_foundepub
+            printf "Did not find epub version of '$title'\n\n"
+            echo $title >> not_foundepub
         fi
     fi
 
 done <links.txt
-
