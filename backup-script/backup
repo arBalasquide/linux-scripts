@@ -1,0 +1,22 @@
+#!/bin/bash
+
+backup_files="/home/$USER/Documents /home/$USER/.config"
+dest="/home/$USER"
+
+# Specify different files to backup
+if [ "$1" = "--files" ]; then
+    backup_files=$2
+fi
+
+day=$(date +%F)
+archive="$USER-$day.tgz"
+
+echo "Backing up $backup_files to $dest/$archive"
+date
+echo
+
+tar czf $dest/$archive $backup_files
+
+echo
+echo "Backup finished."
+date
