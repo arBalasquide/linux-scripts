@@ -1,8 +1,13 @@
 #!/bin/bash
 
-word=$1
-lang="#ja"
+if [  $# -le 1 ]; then 
+    echo "Usage: pronounce [language] [word]"
+	exit 1
+fi 
 
-filepath="$(curl -s https://forvo.com/search/$word/$lang | grep -m 1 'play_' | cut -d',' -f2 | sed "s/'//g")"
+lang=$1
+word=$2
+
+filepath=$(curl -s https://forvo.com/search/$word/$lang | grep -m 1 'play_' | cut -d',' -f2)
 
 curl -s https://forvo.com/player-mp3Handler.php?path=$filepath | cvlc --play-and-exit - 
