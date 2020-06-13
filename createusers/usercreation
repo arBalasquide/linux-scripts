@@ -1,0 +1,21 @@
+#!/bin/bash
+
+cpuquota="35%"
+memlimit="500M"
+
+ID=1001
+while read email; do
+   username=$(echo "$email" | cut -d, -f2 | cut -d@ -f1)
+   password=$(echo "$username" | sha256sum | base64 | head -c 32)
+
+   useradd -m -u $ID -G workshop $username
+   echo "$username:$password" | chpasswd
+
+   systemctl set-property user-$ID.slice CPUQuota=$cpuquota
+   systemctl set-property user-$ID.slice MemoryAccounting="yes"
+   systemctl set-property user-$ID.slice MemoryLimit=$memlimit
+
+   echo "$username $password" >> accounts.txt
+
+   ID=$(($ID+1))
+done < responses.csv

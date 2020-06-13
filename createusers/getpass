@@ -1,0 +1,8 @@
+#!/bin/bash
+
+while read p; do
+   username=$(echo $p | sed -e 's/.*@\(.*\)?????.*/\1/')
+   password=$(echo $username | sha256sum | base64 | head -c 32)
+
+   echo "$password $username" >> accounts.txt
+done < users.txt
