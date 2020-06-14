@@ -8,3 +8,8 @@ Download all currently free books at Springer
 
 # backup-script
 Script that backsups the user's files
+
+# createusers
+Script for creating linux users with limited resource usage. 
+Also includes the solution to the problem of extracting usernames from a txt file
+and getting the password to the accounts.
