@@ -1,6 +1,6 @@
 #!/bin/bash
 
-if [  $# -le 2 ]; then 
+if [  $# -le 1 ]; then 
     echo "Usage: pronounce [language] [word]"
 	exit 1
 fi 
@@ -10,4 +10,4 @@ word=$2
 
 filepath=$(curl -s https://forvo.com/search/$word/$lang | grep -m 1 'play_' | cut -d',' -f2)
 
-curl -s https://forvo.com/player-mp3Handler.php?path=$filepath | cvlc --play-and-exit - 
+curl -s https://forvo.com/player-mp3Handler.php?path=$filepath | mpv - 
