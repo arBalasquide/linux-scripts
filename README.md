@@ -7,7 +7,7 @@ Gets the audio file for the pronuaciation of a word.
 Download all currently free books at Springer
 
 # backup-script
-Script that backsups the user's files
+Script that creates a backup of the user's files
 
 # createusers
 Script for creating linux users with limited resource usage. 
